@@ -1,22 +1,23 @@
 {
-  "name": "acme-country-club",
+  "name": "new_dealers_choice_pg",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon server"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MonilGoklani/acme-country-club.git"
+    "url": "git+https://github.com/Jasontap/new_dealers_choice_pg.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MonilGoklani/acme-country-club/issues"
+    "url": "https://github.com/Jasontap/new_dealers_choice_pg/issues"
   },
-  "homepage": "https://github.com/MonilGoklani/acme-country-club#readme",
+  "homepage": "https://github.com/Jasontap/new_dealers_choice_pg#readme",
   "dependencies": {
     "express": "^4.17.1",
     "method-override": "^3.0.0",

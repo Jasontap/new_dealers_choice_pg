@@ -1,4 +1,4 @@
-const {db,syncAndSeed,model:{Facilities,Bookings,Members,Memberbookings}} = require('./db');
+const {db,syncAndSeed,model:{Tables, Customers, Reservations}} = require('./db');
 const express = require('express');
 const path = require('path')
 const { urlencoded } = require('express');
@@ -8,59 +8,58 @@ app.use(express.urlencoded({ extended:false }));
 app.use(require('method-override')('_method'));
 app.use('/',express.static(path.join(__dirname)));
 
-app.get('/api/facilities',async(req,res,next)=>{
-    try{
-        const facilities = await Facilities.findAll({
-            include:[
-                Bookings
-            ],
-            order:['id']
-        })
-        res.send(facilities)
-    }catch(ex){
-        next(ex)
-    }
-})
 
-app.get('/api/bookings',async(req,res,next)=>{
+app.get('/customers', async(req, res, next)=>{
     try{
-        const bookings = await Bookings.findAll({
-            include:[
-                {
-                    model:Facilities,
-                    as: 'facility'
-                },
-                {
-                    model:Members,
-                    as: 'bookedBy'
-                }
+        const customers = await Customers.findAll({
+            include: [
+                Reservations
             ],
-            order:['id']
+            order: ['id']
         })
-        res.send(bookings)
-    }catch(ex){
-        next(ex)
+        res.send(customers);
+    }
+    catch(ex){
+        next(ex);
     }
 })
 
 
-app.get('/api/members',async(req,res,next)=>{
+app.get('/tables', async(req, res, next)=> {
     try{
-        const members = await Members.findAll({
-            include:[
-                {
-                    model:Members,
-                    as: 'sponsor'
-                }
-            ],
-            order:['id']
+        const tables = await Tables.findAll({
+            include: [
+                Reservations
+            ]
         })
-        res.send(members)
-    }catch(ex){
-        next(ex)
+        res.send(tables);
+    }
+    
+    catch(ex) {
+        next(ex);
     }
 })
 
+
+app.get('/reservations', async(req, res, next)=> {
+    try{
+        const reservations = await Reservations.findAll({
+            include: [{
+                model: Tables,
+                as: 'table'
+            },
+            {
+                model: Customers,
+                as: 'reservedBy'
+            }],
+            order: ['id']
+        })
+        res.send(reservations)
+    }
+    catch(ex) {
+        next(ex)
+    }
+})
 
 
 const init = async() => {
