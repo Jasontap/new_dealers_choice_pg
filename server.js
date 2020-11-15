@@ -1,23 +1,29 @@
-const {db,syncAndSeed,model:{Tables, Customers, Reservations}} = require('./db');
+const {db,syncAndSeed,model:{Tables, People, Reservations}} = require('./db');
 const express = require('express');
 const path = require('path')
-const { urlencoded } = require('express');
+//const { urlencoded } = require('express');
 const app = express();
 
 app.use(express.urlencoded({ extended:false }));
 app.use(require('method-override')('_method'));
-app.use('/',express.static(path.join(__dirname)));
+//app.use('/',express.static(path.join(__dirname)));
+app.use('/public', express.static(path.join(__dirname, 'public'))); 
+
+
+app.get('/', (req, res)=> {
+    res.redirect('/reservations')
+})
 
 
 app.get('/customers', async(req, res, next)=>{
     try{
-        const customers = await Customers.findAll({
+        const people = await People.findAll({
             include: [
                 Reservations
             ],
             order: ['id']
         })
-        res.send(customers);
+        res.send(people);
     }
     catch(ex){
         next(ex);
@@ -49,7 +55,7 @@ app.get('/reservations', async(req, res, next)=> {
                 as: 'table'
             },
             {
-                model: Customers,
+                model: People,
                 as: 'reservedBy'
             }],
             order: ['id']
