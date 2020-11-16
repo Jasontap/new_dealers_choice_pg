@@ -1,4 +1,4 @@
-const { db, syncAndSeed, model:{ Tables, People, Reservations } } = require('./db');
+const { db, syncAndSeed, model:{ Table, Person, Reservation } } = require('./db');
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -15,9 +15,9 @@ app.get('/', (req, res) => {
 
 app.get('/customers', async(req, res, next) =>{
   try{
-    const people = await People.findAll({
+    const people = await Person.findAll({
       include: [
-        Reservations
+        Reservation
       ],
       order: ['id']
     })
@@ -31,9 +31,9 @@ app.get('/customers', async(req, res, next) =>{
 
 app.get('/tables', async(req, res, next) => {
   try{
-    const tables = await Tables.findAll({
+    const tables = await Table.findAll({
       include: [
-        Reservations
+        Reservation
       ]
     })
     res.send(tables);
@@ -46,13 +46,13 @@ app.get('/tables', async(req, res, next) => {
 
 app.get('/reservations', async(req, res, next) => {
   try{
-    const reservations = await Reservations.findAll({
+    const reservations = await Reservation.findAll({
       include: [{
-        model: Tables,
+        model: Table,
         as: 'table'
       },
       {
-        model: People,
+        model: Person,
         as: 'reservedBy'
       }],
       order: ['id']

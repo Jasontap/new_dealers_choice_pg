@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const { STRING, DATE, UUID, UUIDV4 } = Sequelize;
 const db = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/reservations_db')
 
-const Tables = db.define('tables', {
+const Table = db.define('table', {
   table_name: {
     type: STRING(20),
     allowNull: false,
@@ -10,7 +10,7 @@ const Tables = db.define('tables', {
   }
 })
 
-const People = db.define('people', {
+const Person = db.define('person', {
   id: {
     type: UUID,
     primaryKey: true,
@@ -24,7 +24,7 @@ const People = db.define('people', {
 })
 
 
-const Reservations = db.define('reservations', {
+const Reservation = db.define('reservation', {
   reserveTime: {
     type: DATE,
     allowNull: false
@@ -32,50 +32,50 @@ const Reservations = db.define('reservations', {
 })
 
 
-Reservations.belongsTo(People,{ as: 'reservedBy' });
-People.hasMany(Reservations,{ foreignKey:'reservedById' });
+Reservation.belongsTo(Person,{ as: 'reservedBy' });
+Person.hasMany(Reservation,{ foreignKey:'reservedById' });
 
-Reservations.belongsTo(Tables,{ as: 'table' });
-Tables.hasMany(Reservations,{ foreignKey:'tableId' });
+Reservation.belongsTo(Table,{ as: 'table' });
+Table.hasMany(Reservation,{ foreignKey:'tableId' });
 
-People.belongsTo(People,{ as: 'waitedBy' });
-People.hasMany(People,{ foreignKey: 'waitedById' })
+Person.belongsTo(Person,{ as: 'waitedBy' });
+Person.hasMany(Person,{ foreignKey: 'waitedById' })
 
 
 const syncAndSeed = async() => {
   await db.sync({ force:true });
 
-  const [moe,lucy,larry, curley, joe, floe, zoe]=await Promise.all(
-    ['moe','lucy','larry', 'curley', 'joe', 'floe', 'zoe'].map(first_name => People.create({ first_name }))
+  const [moe,lucy,larry, curley, joe, floe, zoe] = await Promise.all(
+    ['moe','lucy','larry', 'curley', 'joe', 'floe', 'zoe'].map(first_name => Person.create({ first_name }))
     );
 
-  const [table1, table2, table3]=await Promise.all(
-    ['table 1', 'table 2', 'table 3'].map(table_name => Tables.create({ table_name }))
+  const [table1, table2, table3] = await Promise.all(
+    ['table 1', 'table 2', 'table 3'].map(table_name => Table.create({ table_name }))
     );
 
-  const [reservation1, reservation2, reservation3, reservation4]=await Promise.all([
-    Reservations.create({ reserveTime: '2020-11-14 10:57:12.72-05' }),
-    Reservations.create({ reserveTime: '2020-11-15 18:57:12.72-05' }),
-    Reservations.create({ reserveTime: '2020-11-15 10:57:12.72-05' }),
-    Reservations.create({ reserveTime: '2020-11-21 09:57:12.72-05' })
+  const [reservation1, reservation2, reservation3, reservation4] = await Promise.all([
+    Reservation.create({ reserveTime: '2020-11-14 10:57:12.72-05' }),
+    Reservation.create({ reserveTime: '2020-11-15 18:57:12.72-05' }),
+    Reservation.create({ reserveTime: '2020-11-15 10:57:12.72-05' }),
+    Reservation.create({ reserveTime: '2020-11-21 09:57:12.72-05' })
   ])
 
 
-  reservation1.reservedById=moe.id;
-  reservation1.tableId=table1.id;
-  moe.waitedById=joe.id;
+  reservation1.reservedById = moe.id;
+  reservation1.tableId = table1.id;
+  moe.waitedById = joe.id;
 
-  reservation2.reservedById=larry.id;
-  reservation2.tableId=table2.id;
-  larry.waitedById=floe.id;
+  reservation2.reservedById = larry.id;
+  reservation2.tableId = table2.id;
+  larry.waitedById = floe.id;
 
-  reservation3.reservedById=lucy.id;
-  reservation3.tableId=table3.id;
-  lucy.waitedById=zoe.id;
+  reservation3.reservedById = lucy.id;
+  reservation3.tableId = table3.id;
+  lucy.waitedById = zoe.id;
 
-  reservation4.reservedById=curley.id;
-  reservation4.tableId=table1.id;
-  curley.waitedById=zoe.id;
+  reservation4.reservedById = curley.id;
+  reservation4.tableId = table1.id;
+  curley.waitedById = zoe.id;
 
 
   await Promise.all([
@@ -93,9 +93,9 @@ const syncAndSeed = async() => {
 module.exports = {
   db,
   syncAndSeed,
-  model:{
-    Tables,
-    People,
-    Reservations
+  model: {
+    Table,
+    Person,
+    Reservation
   }
 }
